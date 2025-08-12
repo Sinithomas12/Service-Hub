@@ -1,0 +1,82 @@
+{% extends 'commonbase.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .image-upload > input {
+        display: none;
+    }
+
+    #img {
+        cursor: pointer;
+        height: 150px;
+        width: 150px;
+        padding: 10px;
+        border-radius: 100px;
+    }
+
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background: #fff;
+        padding: 20px;
+    }
+
+    .contact-input, textarea, select {
+        border-radius: 8px;
+    }
+
+    .submit-btn {
+        display: block;
+        margin: 20px auto;
+        background-color: orange;
+        color: white;
+        padding: 10px 30px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        background-color: darkorange;
+    }
+</style>
+
+<section class="w3l-contact pb-5" id="contact">
+    <div class="container pb-md-5 pb-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 mt-5">
+                <div class="card p-4">
+                    <h3 class="title-style mb-4 pb-2 text-center">User Registration</h3>
+                    <form method="post" class="signin-form" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="input-grids">
+                            <input type="text" name="Name" placeholder="Your Name*" class="contact-input form-control mb-3" required>
+                            <input type="email" name="Email" placeholder="Your Email*" class="contact-input form-control mb-3" required>
+                            <input type="password" name="Password" placeholder="Password*" class="contact-input form-control mb-3" required>
+                            <input type="text" name="Number" placeholder="Phone Number*" class="contact-input form-control mb-3" required>
+                            
+                            <select name="Gender" class="form-control mb-3">
+                                <option value="" selected disabled>Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-input mb-3">
+                            <textarea name="Address" placeholder="Type your address here*" class="form-control" required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
