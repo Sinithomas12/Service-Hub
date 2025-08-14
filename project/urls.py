@@ -17,7 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app import views
-
+from django.conf.urls.static import static
+import os
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +28,13 @@ urlpatterns = [
     path('about/', views.about),
     path('login/', views.login),
     path('userregistration/', views.userregistration),
-    #path('workerregistration/', views.workerregistration),
+    path('workerregistration/', views.workerregistration),
+    path('contactus/', views.contact),
+    path('adminhome/', views.adminhome),
+    path('addcategory/', views.addcategory),
+    path('viewuser/', views.viewuser),
 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

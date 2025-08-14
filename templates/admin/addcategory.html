@@ -1,0 +1,91 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    /* Card styling */
+    .card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        margin-top: 60px;
+        margin-bottom: 100px; /* add this to lift card from footer */
+    }
+
+    .card-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+
+    /* Orange button */
+    .btn-orange {
+        background-color: orange;
+        color: white;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .btn-orange:hover {
+        background-color: darkorange;
+    }
+
+    /* Preview image */
+    #img-preview {
+        display: none;
+        margin-top: 15px;
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+    }
+</style>
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Add Category</div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- File upload -->
+                        <div class="mb-3">
+                            <label class="form-label">Upload Image*</label>
+                            <input id="file-input" onchange="previewImage(event)" name="image" type="file" class="form-control" required />
+                            <img id="img-preview" alt="Preview">
+                        </div>
+
+                        <!-- Category name -->
+                        <div class="mb-3">
+                            <label class="form-label">Category Name*</label>
+                            <input type="text" name="Category" class="form-control" placeholder="Add Category" required />
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="text-center">
+                            <button class="btn btn-orange">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        let img = document.getElementById("img-preview");
+        img.src = URL.createObjectURL(event.target.files[0]);
+        img.style.display = "block";
+    }
+</script>
+
+{% endblock %}

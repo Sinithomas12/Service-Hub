@@ -30,11 +30,13 @@ JOB_STATUS_CHOICES = [
 
 # --- Login Model ---
 class Login(models.Model):
-    username = models.CharField(max_length=100, unique=True)
+    email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
+    userType = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return self.username
+        return self.email
+
 
 
 # --- Workers Registration ---
@@ -51,7 +53,7 @@ class WorkersReg(models.Model):
     phone = models.CharField(max_length=100, null=True)
     experience = models.CharField(max_length=100, null=True)
     location = models.CharField(max_length=100, null=True)
-    image = models.ImageField(max_length=100,null=True, blank=True)
+    image = models.ImageField(upload_to='workers/', null=True, blank=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True)
     category = models.CharField(max_length=100, null=True)
     address = models.CharField(max_length=100, null=True)
@@ -81,5 +83,17 @@ class UserReg(models.Model):
 
     def __str__(self):
         return self.name
+class Category(models.Model):
+    category = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='categories/', null=True, blank=True)
 
+    def __str__(self):
+        return self.category
+class Contactus(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(max_length=100, null=True, blank=True)
+    message = models.TextField(null=True, blank=True)  # Better for long messages
+
+    def __str__(self):
+        return self.name or "No Name"
 

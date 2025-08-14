@@ -2,203 +2,66 @@
 {% load static %}
 {% block content %}
 
-    <!-- contact -->
-    <section class="w3l-contact pb-5" id="contact">
-        <div class="container pb-md-5 pb-4">
-            <div class="row contact-block">
-                <div class="col-lg-7 contact-right mt-5">
-                    <h3 class="title-style mb-4 pb-2">Contact Us</h3>
-                    <form  method="POST" class="signin-form">
-                        {% csrf_token %}
+<section class="w3l-contact pb-5" id="contact">
+    <div class="container pb-md-5 pb-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 mt-5"> <!-- Added mt-5 for top space -->
 
-                        <div class="input-grids">
-                            <input type="text" name="name" id="w3lName" placeholder="Your Name*"
-                                class="contact-input" required="" />
-                            <input type="email" name="email" id="w3lSender" placeholder="Your Email*"
-                                class="contact-input" required="" />
+                <!-- Contact Form Card -->
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <h3 class="title-style mb-4 text-center">Contact Us</h3>
 
-                        </div>
-                        <div class="form-input">
-                            <textarea name="message" id="w3lMessage" placeholder="Type your message here*"
-                                required=""></textarea>
-                        </div>
-                        <button class="btn btn-style mt-sm-3">Send Message</button>
-                    </form>
+                        {% if msg %}
+                            <div class="alert alert-success text-center">{{ msg }}</div>
+                        {% endif %}
 
-                    <div class="contact-left mt-5 pt-lg-4">
-                        <div class="row cont-details">
-                            <div class="col-sm-6">
-                                <div class="d-flex contact-grid">
-                                    <div class="cont-left text-center mr-3">
-                                        <span class="fa fa-globe"></span>
-                                    </div>
-                                    <div class="cont-right">
-                                        <h6>Company Address</h6>
-                                        <p> Star junction, Vyskara Ln, Vyaskara, Kottayam, Kerala 686001.</p>
-                                    </div>
-                                </div>
-                                <div class="d-flex contact-grid mt-4 pt-lg-2">
-                                    <div class="cont-left text-center mr-3">
-                                        <span class="fa fa-phone"></span>
-                                    </div>
-                                    <div class="cont-right">
-                                        <h6>Call Us</h6>
-                                        <p><a href="tel:+1(21) 234 4567">+1(21) 112 7368</a></p>
-                                    </div>
-                                </div>
+                        <form method="POST" class="signin-form">
+                            {% csrf_token %}
+
+                            <!-- Name -->
+                            <div class="mb-3">
+                                <input type="text" name="name" placeholder="Your Name*" 
+                                    class="form-control rounded-3" required>
                             </div>
-                            <div class="col-sm-6 mt-sm-0 mt-4">
-                                <div class="d-flex contact-grid">
-                                    <div class="cont-left text-center mr-3">
-                                        <span class="fa fa-envelope-open"></span>
-                                    </div>
-                                    <div class="cont-right">
-                                        <h6>Email Us</h6>
-                                        <p><a href="mailto:example@mail.com" class="mail">Workland@gmail.com</a></p>
-                                    </div>
-                                </div>
-                                <div class="d-flex contact-grid mt-4 pt-lg-2">
-                                    <div class="cont-left text-center mr-3">
-                                        <span class="fa fa-headphones"></span>
-                                    </div>
-                                    <div class="cont-right">
-                                        <h6>Customer Support</h6>
-                                        <p><a href="mailto:info@support.com" class="mail">info@support.com</a></p>
-                                    </div>
-                                </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <input type="email" name="email" placeholder="Your Email*" 
+                                    class="form-control rounded-3" required>
                             </div>
+
+                            <!-- Message -->
+                            <div class="mb-3">
+                                <textarea name="message" placeholder="Type your message here*" 
+                                    class="form-control rounded-3" rows="4" required></textarea>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="text-center mt-4">
+                                <button class="btn btn-warning px-4 rounded-3 text-white fw-bold">
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Contact Info -->
+                        <div class="mt-5">
+                            <h6><i class="fa fa-globe me-2 text-warning"></i>Company Address</h6>
+                            <p>Star Junction, Vyskara Ln, Vyaskara, Kottayam, Kerala 686001</p>
+                            <h6><i class="fa fa-phone me-2 text-warning"></i>Call Us</h6>
+                            <p><a href="tel:+1121127368" class="text-decoration-none">+1 (21) 112 7368</a></p>
+                            <h6><i class="fa fa-envelope-open me-2 text-warning"></i>Email Us</h6>
+                            <p><a href="mailto:Workland@gmail.com" class="text-decoration-none">Workland@gmail.com</a></p>
+                            <h6><i class="fa fa-headphones me-2 text-warning"></i>Customer Support</h6>
+                            <p><a href="mailto:info@support.com" class="text-decoration-none">info@support.com</a></p>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-5 mt-lg-0 mt-5 pl-xl-5 pl-lg-4">
-                    <div class="map-iframe">
-                        <iframe
-                            src="https://www.google.com/maps/d/embed?mid=1hudx3cGTa7CiIAqemYeDdFVTyjU&ie=UTF8&hl=en&msa=0&ll=9.543536204161438%2C76.52664167187501&spn=0.325004%2C0.439453&z=10&output=embed"
-                            width="100%" height="400" frameborder="0" allowfullscreen=""></iframe>
-                    </div>
-                </div>
+
             </div>
         </div>
-    </section>
-    <!-- //contact -->
+    </div>
+</section>
 
-
-    <!-- //footer -->
-
-
-    <!-- Js scripts -->
-    <!-- move top -->
-    <button onclick="topFunction()" id="movetop" title="Go to top">
-        <span class="fa fa-level-up" aria-hidden="true"></span>
-    </button>
-    <script>
-        // When the user scrolls down 20px from the top of the document, show the button
-        window.onscroll = function () {
-            scrollFunction()
-        };
-
-        function scrollFunction() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                document.getElementById("movetop").style.display = "block";
-            } else {
-                document.getElementById("movetop").style.display = "none";
-            }
-        }
-
-        // When the user clicks on the button, scroll to the top of the document
-        function topFunction() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        }
-    </script>
-    <!-- //move top -->
-
-    <!-- common jquery plugin -->
-    <script src="assets/js/jquery-3.3.1.min.js"></script>
-    <!-- //common jquery plugin -->
-
-     <!-- theme switch js (light and dark)-->
-    <script src="{% static 'assets/js/theme-change.js' %}"></script>
-    <script>
-        function autoType(elementClass, typingSpeed) {
-            var thhis = $(elementClass);
-            thhis.css({
-                "position": "relative",
-                "display": "inline-block"
-            });
-            thhis.prepend('<div class="cursor" style="right: initial; left:0;"></div>');
-            thhis = thhis.find(".text-js");
-            var text = thhis.text().trim().split('');
-            var amntOfChars = text.length;
-            var newString = "";
-            thhis.text("|");
-            setTimeout(function () {
-                thhis.css("opacity", 1);
-                thhis.prev().removeAttr("style");
-                thhis.text("");
-                for (var i = 0; i < amntOfChars; i++) {
-                    (function (i, char) {
-                        setTimeout(function () {
-                            newString += char;
-                            thhis.text(newString);
-                        }, i * typingSpeed);
-                    })(i + 1, text[i]);
-                }
-            }, 1500);
-        }
-
-        $(document).ready(function () {
-            // Now to start autoTyping just call the autoType function with the
-            // class of outer div
-            // The second paramter is the speed between each letter is typed.
-            autoType(".type-js", 200);
-        });
-    </script>
-    <!-- //theme switch js (light and dark)-->
-    <!-- MENU-JS -->
-    <script>
-        $(window).on("scroll", function () {
-            var scroll = $(window).scrollTop();
-
-            if (scroll >= 80) {
-                $("#site-header").addClass("nav-fixed");
-            } else {
-                $("#site-header").removeClass("nav-fixed");
-            }
-        });
-
-        //Main navigation Active Class Add Remove
-        $(".navbar-toggler").on("click", function () {
-            $("header").toggleClass("active");
-        });
-        $(document).on("ready", function () {
-            if ($(window).width() > 991) {
-                $("header").removeClass("active");
-            }
-            $(window).on("resize", function () {
-                if ($(window).width() > 991) {
-                    $("header").removeClass("active");
-                }
-            });
-        });
-    </script>
-    <!-- //MENU-JS -->
-
-    <!-- disable body scroll which navbar is in active -->
-    <script>
-        $(function () {
-            $('.navbar-toggler').click(function () {
-                $('body').toggleClass('noscroll');
-            })
-        });
-    </script>
-    <!-- //disable body scroll which navbar is in active -->
-
-    <!--bootstrap-->
-    <script src="assets/js/bootstrap.min.js"></script>
-    <!-- //bootstrap-->
-    <!-- //Js scripts -->
-</body>
-
-</html>
 {% endblock %}

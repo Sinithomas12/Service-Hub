@@ -53,10 +53,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'project.urls'
 
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [BASE_DIR / "templates"],  # ✅ absolute path
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,10 +124,9 @@ USE_TZ = True
 STATIC_URL = '/static/'  # ← MUST start and end with a slash
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # ← Correct key: STATICFILES_DIRS
 
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/image/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'app/static/assets/image')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

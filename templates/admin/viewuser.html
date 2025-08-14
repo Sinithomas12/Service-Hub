@@ -1,0 +1,100 @@
+{% extends 'admin/adminhome.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th,
+    td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+    }
+
+    img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+
+    #img {
+        width: 40px;
+        height: 40px;
+    }
+</style>
+
+<!-- View Users -->
+<section class="w3l-team" id="team">
+    <div class="team-block py-5">
+        <div class="container py-lg-5">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-8">
+                    <div class="section-heading mb-sm-5 mb-4">
+                        <h3 class="title-style mb-2">View Users</h3>
+                    </div>
+                </div>
+            </div>
+           <table id="myTable">
+             <thead>
+                <tr class="header">
+                    <th>Name</th>
+                    <th>Email</th>
+                        <th>Phone</th>
+                        <!-- <th>Image</th> -->
+                        <th>Gender</th>
+                        <th>Address</th>
+                        <th>Action</th>
+
+                </tr>
+             </thead>
+             <tbody>
+                {% for i in abc%}
+                <tr>
+                       <td>i.name</td>
+                       <td>i.email</td>
+                    
+                        <td>{{ i.phone }}</td>
+                        <!-- <td><img src="{% static 'assets/images/' %}{{ i.image }}" alt="{{ i.name }}"></td> -->
+                        <td>{{ i.gender }}</td>
+                        <td>{{ i.address }}</td>
+                        <!--<td><a href="{% url 'rejecteduser' %}?ab={{ i.usrid_id }}" class="btn btn-danger">
+                            Delete</a></td>-->
+                </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">No users found</td>
+                    </tr>
+                    {% endfor %}
+             </tbody>
+
+           </table>
+        </div>
+    </div>
+</section>
+
+<!-- copyright -->
+<section class="w3l-copyright">
+    <div class="container">
+        <div class="row bottom-copies">
+            <p class="col-lg-8 copy-footer-29">© 2023 Work Land. All rights reserved.</p>
+            <div class="col-lg-4 text-right">
+                <div class="main-social-footer-29">
+                    <a href="#facebook" class="facebook"><span class="fa fa-facebook"></span></a>
+                    <a href="#twitter" class="twitter"><span class="fa fa-twitter"></span></a>
+                    <a href="#google"><span class="fa fa-google-plus" aria-hidden="true"></span></a>
+                    <a href="#instagram" class="instagram"><span class="fa fa-instagram"></span></a>
+                    <a href="#linkedin" class="linkedin"><span class="fa fa-linkedin"></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
