@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import *
 from django.shortcuts import redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from datetime import date as d, datetime as dt
 
@@ -13,25 +14,33 @@ def services(request):
 def about(request):
     return render(request, 'about.html')
 def login(request):
-    msg=request.GET.get('msg','')
-    if request.method=="POST":
-        email=request.POST.get('email')
-        password=request.POST.get('password')
+    msg = request.GET.get('msg', '')
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
         try:
-            data=Login.objects.get(email=email,password=password)
-            request.session['email']=email
-            request.session['userType']=data.userType
+            # Check if credentials match in Login table
+            data = Login.objects.get(email=email, password=password)
 
-            if data.userType=="admin":
-                return render(request, 'admin/adminhome.html')
-            elif data.userType=="worker":
-                return redirect('')
-            elif data.userType=="user":
-                return redirect('')
+            # Save session
+            request.session['email'] = data.email
+            request.session['userType'] = data.userType
+
+            # Redirect based on user type
+            if data.userType == "admin":
+                return redirect('adminhome')   # use named url instead of render
+            elif data.userType == "worker":
+                return redirect('worker_home')
+            elif data.userType == "user":
+                return redirect('userhome')
+
         except Login.DoesNotExist:
-            msg="Invalid username or password provided"
-    return render(request,'login.html',{'msg':msg})
+            msg = "Invalid username or password provided"
+
+    return render(request, 'login.html', {'msg': msg})
+
 def userregistration(request):
     msg=""
     msg=request.GET.get('msg')
@@ -136,7 +145,49 @@ def addcategory(request):
 def viewuser(request):
     abc = UserReg.objects.all()
     return render(request, 'admin/viewuser.html', {"abc": abc})
+def viewworker(request):
+    abc = WorkersReg.objects.all()
+    return render(request, 'admin/viewworker.html', {"abc": abc})
+def viewcategory(request):
+    abc=Category.objects.all()
+    return render(request,'admin/viewcategory.html',{"abc":abc})
 
 
 
-        
+
+
+
+     ############################### USER#################################
+
+def userhome(request):
+    msg = ""
+    msg = request.GET.get('msg')
+    return render(request, 'user/userhome.html', {})
+def userviewcategory(request):
+    abc=Category.objects.all()
+    return render(request,'user/userviewcategory.html',{"abc":abc})
+from django.shortcuts import render, get_object_or_404
+from .models import Category, WorkersReg
+
+def bookingcategory(request):
+    # 1) Get category name from query parameter (?type=Plumber)
+    servicetype = request.GET.get("type")
+
+    # 2) Ensure category exists
+    selectedcategory = get_object_or_404(Category, category=servicetype)
+
+    # 3) Fetch all workers under this category who are approved
+    workers = WorkersReg.objects.filter(
+        category=selectedcategory,
+        status="approved"
+    )
+
+    # 4) Pass category + workers list to template
+    return render(
+        request,
+        "user/bookingcategory.html",
+        {
+            "selectedcategory": selectedcategory,
+            "workers": workers
+        }
+    )

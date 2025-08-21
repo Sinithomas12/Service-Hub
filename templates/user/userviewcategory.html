@@ -1,0 +1,147 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- User Services -->
+<section class="w3l-team" id="team">
+    <div class="team-block py-5">
+        <div class="container py-lg-5">
+            <!-- Heading -->
+            <div class="row justify-content-center text-center">
+                <div class="col-md-8">
+                    <div class="section-heading mb-sm-5 mb-4">
+                        <h3 class="title-style mb-2" style="margin-top: -7%;">Available Services</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 🔎 Search -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-6">
+                    <input type="text" id="searchInput" onkeyup="searchServices()" 
+                           placeholder="Search services..." class="form-control">
+                </div>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="row justify-content-center" id="servicesContainer">
+                {% for i in abc %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 service-card">
+                    <div class="service-box text-center">
+                        <a href="/bookingcategory?type={{i.category}}">
+                            <img src="{{ i.image.url }}" alt="{{ i.category }}" class="service-img">
+
+                        </a>
+                        <div class="service-content mt-3">
+                            <h5 class="service-title">
+                                <a href="/bookingcategory?type={{i.category}}">{{i.category}}</a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- 📄 Pagination Controls -->
+            <div class="row justify-content-center mt-4">
+                <nav>
+                    <ul class="pagination" id="pagination"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- //User Services -->
+
+<style>
+    /* Service Card */
+    .service-box {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 15px;
+        background: #fff;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .service-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Service Image */
+    .service-img {
+        width: 100%;
+        height: 200px;           /* fixed height for uniform size */
+        object-fit: cover;       /* keeps aspect ratio while filling */
+        border-radius: 8px;
+    }
+
+    /* Title */
+    .service-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-top: 10px;
+    }
+
+    .service-title a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .service-title a:hover {
+        color: #ff6600; /* orange hover */
+    }
+</style>
+
+<!-- 🔎 Search + Pagination Script -->
+<script>
+    let currentPage = 1;
+    const itemsPerPage = 8; // number of services per page
+
+    function searchServices() {
+        currentPage = 1;
+        renderPagination();
+    }
+
+    function renderPagination() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let cards = Array.from(document.getElementsByClassName("service-card"));
+
+        // Filter by search
+        let filtered = cards.filter(card => card.innerText.toLowerCase().includes(input));
+
+        // Hide all first
+        cards.forEach(card => card.style.display = "none");
+
+        // Pagination logic
+        let totalPages = Math.ceil(filtered.length / itemsPerPage);
+        let start = (currentPage - 1) * itemsPerPage;
+        let end = start + itemsPerPage;
+
+        filtered.slice(start, end).forEach(card => card.style.display = "block");
+
+        // Build pagination UI
+        let pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+
+        if (totalPages > 1) {
+            for (let i = 1; i <= totalPages; i++) {
+                let li = document.createElement("li");
+                li.className = "page-item" + (i === currentPage ? " active" : "");
+                li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                li.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    currentPage = i;
+                    renderPagination();
+                });
+                pagination.appendChild(li);
+            }
+        }
+    }
+
+    // Initialize pagination on page load
+    window.onload = renderPagination;
+</script>
+{% endblock %}

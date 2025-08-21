@@ -33,7 +33,12 @@ urlpatterns = [
     path('adminhome/', views.adminhome),
     path('addcategory/', views.addcategory),
     path('viewuser/', views.viewuser),
-
+    path('viewworker/', views.viewworker),
+    path("viewcategory/", views.viewcategory),
+    #path('userhome/', views.userhome),
+    path('userhome/', views.userhome, name='userhome'), 
+    path("userviewcategory/", views.userviewcategory),
+    path("bookingcategory/", views.bookingcategory, name="bookingcategory"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))

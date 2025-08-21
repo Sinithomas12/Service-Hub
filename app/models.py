@@ -11,6 +11,7 @@ from django.db import models
 
 # --- Choice Lists ---
 GENDER_CHOICES = [
+
     ('Male', 'Male'),
     ('Female', 'Female'),
     ('Other', 'Other')
@@ -36,6 +37,13 @@ class Login(models.Model):
 
     def __str__(self):
         return self.email
+    
+class Category(models.Model):
+    category = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='categories/', null=True, blank=True)
+
+    def __str__(self):
+        return self.category
 
 
 
@@ -55,7 +63,8 @@ class WorkersReg(models.Model):
     location = models.CharField(max_length=100, null=True)
     image = models.ImageField(upload_to='workers/', null=True, blank=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True)
-    category = models.CharField(max_length=100, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
+
     address = models.CharField(max_length=100, null=True)
     wages = models.CharField(max_length=100, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
@@ -83,12 +92,7 @@ class UserReg(models.Model):
 
     def __str__(self):
         return self.name
-class Category(models.Model):
-    category = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='categories/', null=True, blank=True)
 
-    def __str__(self):
-        return self.category
 class Contactus(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True, blank=True)

@@ -1,0 +1,89 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Workers under selected category -->
+<section class="w3l-team" id="team">
+    <div class="team-block py-5">
+        <div class="container py-lg-5">
+
+            <!-- Heading -->
+            <div class="row justify-content-center text-center">
+                <div class="col-md-8">
+                    <div class="section-heading mb-sm-5 mb-4">
+                        <h3 class="title-style mb-2">
+                            Available Workers in <span style="color:#ff6600;">{{ selectedcategory.category }}</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workers Grid -->
+            <div class="row justify-content-center">
+                {% for worker in workers %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="worker-card text-center">
+                        <!-- Worker Image -->
+                        {% if worker.image %}
+                            <img src="{{ worker.image.url }}" alt="{{ worker.name }}" class="worker-img">
+                        {% else %}
+                            <img src="{% static 'images/default-user.png' %}" alt="No image" class="worker-img">
+                        {% endif %}
+
+                        <!-- Worker Info -->
+                        <div class="worker-info mt-3">
+                            <h5>{{ worker.name }}</h5>
+                            <p><b>Experience:</b> {{ worker.experience }}</p>
+                            <p><b>Location:</b> {{ worker.location }}</p>
+                            <p><b>Wages:</b> ₹{{ worker.wages }}</p>
+                        </div>
+
+                        <!-- Book Button -->
+                        <form method="POST" action="{% url 'book_worker' worker.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm mt-2">Book Now</button>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center">No workers available in this category right now.</p>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Styles -->
+<style>
+    .worker-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 15px;
+        background: #fff;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    .worker-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    .worker-img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .worker-info h5 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 10px 0 5px;
+    }
+    .worker-info p {
+        font-size: 14px;
+        margin: 2px 0;
+        color: #555;
+    }
+</style>
+
+{% endblock %}

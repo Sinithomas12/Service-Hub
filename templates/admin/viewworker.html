@@ -1,0 +1,134 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Styles -->
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        text-align: center;
+        padding: 6px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+    }
+
+    img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+</style>
+
+<!-- View Workers -->
+<section class="w3l-team" id="team">
+    <div class="team-block py-5">
+        <div class="container py-lg-5">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-8">
+                    <div class="section-heading mb-sm-5 mb-4">
+                        <h3 class="title-style mb-2" style="margin-top: -7%;">View Workers</h3><br>
+                    </div>
+                </div>
+            </div>
+
+            {% if abc %}
+            <!-- Search & Export -->
+            <div class="d-flex justify-content-between mb-3">
+                <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search workers..."
+                    class="form-control w-25">
+                <div>
+                    <button class="btn btn-success btn-sm mx-1" onclick="exportTableToExcel('workerTable','Workers')">Export Excel</button>
+                    <button class="btn btn-danger btn-sm mx-1" onclick="exportTableToPDF()">Export PDF</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <table id="workerTable" class="table table-bordered table table-hover">
+                <thead class="thead">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Image</th>
+                        <th>Experience</th>
+                        <th>Location</th>
+                        <th>Gender</th>
+                        <th>Category</th>
+                        <th>Wages</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    {% for i in abc %}
+                    <tr>
+                        <td>{{ i.name }}</td>
+                        <td>{{ i.email }}</td>
+                        <td>{{ i.phone }}</td>
+                        <td><img src="{{ i.image.url }}" alt="worker image"></td>
+                        <td>{{ i.experience }}</td>
+                        <td>{{ i.location }}</td>
+                        <td>{{ i.gender }}</td>
+                        <td>{{ i.category }}</td>
+                        <td>{{ i.wages }}</td>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <a href="/approveworker?id={{ i.usrid_id }}" class="btn btn-success btn-sm mx-1">Approve</a>
+                                <a href="/rejectworker?id={{ i.usrid_id }}" class="btn btn-warning btn-sm mx-1">Reject</a>
+                                <a href="/deleteworker?id={{ i.usrid_id }}" class="btn btn-danger btn-sm mx-1">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% else %}
+            <!-- No Workers Message -->
+            <div class="alert alert-info text-center mt-4">
+                <strong>No workers found!</strong>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    // Search function
+    function searchTable() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let rows = document.querySelectorAll("#workerTable tbody tr");
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+
+    // Export to Excel
+    function exportTableToExcel(tableID, filename = '') {
+        var wb = XLSX.utils.table_to_book(document.getElementById(tableID), { sheet: "Sheet1" });
+        XLSX.writeFile(wb, filename ? filename + '.xlsx' : 'export.xlsx');
+    }
+
+    // Export to PDF
+    function exportTableToPDF() {
+        const { jsPDF } = window.jspdf;
+        var doc = new jsPDF();
+        doc.text("Workers Data", 14, 10);
+        doc.autoTable({ html: '#workerTable' });
+        doc.save('workers.pdf');
+    }
+</script>
+
+{% endblock %}
