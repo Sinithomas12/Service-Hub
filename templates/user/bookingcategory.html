@@ -39,7 +39,7 @@
                         </div>
 
                         <!-- Book Button -->
-                        <form method="POST" action="{% url 'book_worker' worker.id %}">
+                        <form method="POST" action="">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary btn-sm mt-2">Book Now</button>
                         </form>

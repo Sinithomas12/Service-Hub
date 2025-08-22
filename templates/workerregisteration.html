@@ -88,9 +88,10 @@
                 <select name="Category" class="contact-input" required>
                     <option value="" selected disabled>Category</option>
                     {% for i in cat %}
-                    <option value="{{i.category}}">{{i.category}}</option>
+                        <option value="{{ i.id }}">{{ i.category }}</option>
                     {% endfor %}
                 </select>
+                
 
                 <input type="text" name="Wages" placeholder="Wages*" class="contact-input" required>
 

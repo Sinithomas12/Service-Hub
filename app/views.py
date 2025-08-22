@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import *
 from django.shortcuts import redirect
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseRedirect
 
 from datetime import date as d, datetime as dt
 
@@ -61,8 +62,9 @@ def userregistration(request):
             msg="Registration Successful"
     return render(request,'userregisteration.html',{"msg":msg})
 def workerregistration(request):
-    msg = request.GET.get('msg', '')  # Default empty string if msg not passed
+    msg = request.GET.get('msg', '')
     cat = Category.objects.all()
+    
     if request.method == "POST":
         name = request.POST.get("Name")
         email = request.POST.get("Email")
@@ -72,21 +74,22 @@ def workerregistration(request):
         gender = request.POST.get("Gender")
         experience = request.POST.get("Experience")
         location = request.POST.get("Location")
-        category = request.POST.get("Category")
+        category_id = request.POST.get("Category")  # get the id from form
         wages = request.POST.get("Wages")
-        
-        # Handle image upload
         image = request.FILES.get("image")
+        
         if not image:
             msg = "Please upload an image"
-            return render(request, 'workerregisteration.html', {"msg": msg})
+            return render(request, 'workerregisteration.html', {"msg": msg, "cat": cat})
 
-        # Check if email is already registered
         if WorkersReg.objects.filter(email=email).exists() or Login.objects.filter(email=email).exists():
             msg = "Email already registered"
         else:
             # Create login record
             login_record = Login.objects.create(email=email, password=password, userType='worker')
+            
+            # Fetch the Category instance
+            category_instance = Category.objects.get(id=category_id)
             
             # Create worker record
             reg = WorkersReg.objects.create(
@@ -99,14 +102,17 @@ def workerregistration(request):
                 gender=gender,
                 experience=experience,
                 location=location,
-                category=category,
+                category=category_instance,  # ✅ pass the instance
                 wages=wages,
                 worid=login_record
             )
             
             msg = "Registration Successful"
 
-    return render(request, 'workerregisteration.html', {"msg": msg,"cat": cat})
+
+
+    return render(request, 'workerregisteration.html', {"msg": msg, "cat": cat})
+
 def contact(request):
     msg = ""
 
@@ -191,3 +197,18 @@ def bookingcategory(request):
             "workers": workers
         }
     )
+def approveworker(request):
+    workerid=request.GET.get("id")
+    if workerid:
+        WorkersReg.objects.filter(id=workerid).update(status="approved")
+    msg="Worker approved"
+    return HttpResponseRedirect("/viewworker?msg=" + msg)
+def rejectedworker(request):
+    workerid=request.GET.get("id")
+    if workerid:
+        worker=WorkersReg.objects.filter(id=workerid).first()
+        if worker and worker.worid:
+            worker.worid.delete()
+    msg="Worker rejected and deleted"
+    return HttpResponseRedirect("/viewworker?msg="+msg)
+    

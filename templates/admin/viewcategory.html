@@ -1,4 +1,4 @@
-{% extends 'admin/base.html' %}
+{% extends 'admin/commonbase.html' %}
 {% load static %}
 {% block content %}
 <section class="w3l-team" id="team">
@@ -7,7 +7,7 @@
             <div class="row justify-content-center text-center">
                 <div class="col-md-8">
                     <div class="section-heading mb-sm-5 mb-4">
-                        <h3 class="title-style mb-2" style="margin-top: -7%;">View Services</h3>
+                        <h3 class="title-style mb-2" style="margin-top: -7%;">SERVICES</h3>
                     </div>
                 </div>
             </div>
@@ -25,12 +25,12 @@
                 {% for i in abc %}
                 <div class="col-md-4 col-sm-6 mb-4 service-card">
                     <div class="box10 text-center">
-                        <a href="/bookingcatadmin?type={{i.category}}">
+                        <a href="">
                             <img src="{{ i.image.url }}" alt="{{i.category}}" class="img-fluid smaller-image" />
                         </a>
                         <div class="box-conten">
                             <h3 class="title mt-2">
-                                <a href="/bookingcatadmin?type={{i.category}}">{{i.category}}</a>
+                                <a href="">{{i.category}}</a>
                             </h3>
                             <div class="d-flex justify-content-center mt-3">
                                 <a href="/editcategory?id={{i.id}}" class="btn btn-warning btn mx-1">Edit</a>
