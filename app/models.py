@@ -11,7 +11,6 @@ from django.db import models
 
 # --- Choice Lists ---
 GENDER_CHOICES = [
-
     ('Male', 'Male'),
     ('Female', 'Female'),
     ('Other', 'Other')
@@ -23,11 +22,14 @@ STATUS_CHOICES = [
     ('rejected', 'Rejected')
 ]
 
+# Better for availability tracking
 JOB_STATUS_CHOICES = [
-    ('not completed', 'Not Completed'),
-    ('in progress', 'In Progress'),
-    ('completed', 'Completed')
+    ('available', 'Available'),      # Free to be booked
+    ('busy', 'Busy'),                # Currently working
+    ('completed', 'Completed')       # Job done, free again
 ]
+
+
 
 # --- Login Model ---
 class Login(models.Model):
@@ -48,11 +50,12 @@ class Category(models.Model):
 
 
 # --- Workers Registration ---
+
 class WorkersReg(models.Model):
     worid = models.ForeignKey(
-        Login, 
-        on_delete=models.CASCADE, 
-        null=True, 
+        Login,
+        on_delete=models.CASCADE,
+        null=True,
         related_name="workers"
     )
     name = models.CharField(max_length=100, null=True)
@@ -64,11 +67,11 @@ class WorkersReg(models.Model):
     image = models.ImageField(upload_to='workers/', null=True, blank=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
-
     address = models.CharField(max_length=100, null=True)
     wages = models.CharField(max_length=100, null=True)
+
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
-    jobstatus = models.CharField(max_length=20, choices=JOB_STATUS_CHOICES, default="not completed")
+    jobstatus = models.CharField(max_length=20, choices=JOB_STATUS_CHOICES, default="available")
 
     def __str__(self):
         return f"{self.name} ({self.category})"
@@ -100,4 +103,14 @@ class Contactus(models.Model):
 
     def __str__(self):
         return self.name or "No Name"
-
+class Booking(models.Model):
+    user=models.ForeignKey(UserReg,on_delete=models.CASCADE)
+    worker=models.ForeignKey(WorkersReg,on_delete=models.CASCADE)
+    booking_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[("booked", "Booked"), ("completed", "Completed"), ("cancelled", "Cancelled")],
+        default="booked"
+    )
+    def __str__(self):
+        return f"{self.user.name} booked {self.worker.name}"

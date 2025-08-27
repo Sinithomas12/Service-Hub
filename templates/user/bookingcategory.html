@@ -2,6 +2,20 @@
 {% load static %}
 {% block content %}
 
+<!-- Inline Alert Messages -->
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                        {% if message.tags %} alert-{{ message.tags }} {% else %} alert-info {% endif %} 
+                        alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
 <!-- Workers under selected category -->
 <section class="w3l-team" id="team">
     <div class="team-block py-5">
@@ -23,26 +37,39 @@
                 {% for worker in workers %}
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                     <div class="worker-card text-center">
-                        <!-- Worker Image -->
+
                         {% if worker.image %}
                             <img src="{{ worker.image.url }}" alt="{{ worker.name }}" class="worker-img">
                         {% else %}
                             <img src="{% static 'images/default-user.png' %}" alt="No image" class="worker-img">
                         {% endif %}
 
-                        <!-- Worker Info -->
                         <div class="worker-info mt-3">
                             <h5>{{ worker.name }}</h5>
                             <p><b>Experience:</b> {{ worker.experience }}</p>
                             <p><b>Location:</b> {{ worker.location }}</p>
                             <p><b>Wages:</b> ₹{{ worker.wages }}</p>
+                            <p><b>Status:</b> 
+                                {% if worker.jobstatus == "available" %} ✅ Available
+                                {% elif worker.jobstatus == "busy" %} ⏳ Busy
+                                {% else %} ✔️ Completed
+                                {% endif %}
+                            </p>
                         </div>
 
-                        <!-- Book Button -->
-                        <form method="POST" action="">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary btn-sm mt-2">Book Now</button>
-                        </form>
+                        {% if worker.jobstatus == "available" %}
+                            <form method="POST" action="{% url 'book_worker' worker.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary btn-sm mt-2">Book Now</button>
+                            </form>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm mt-2" disabled>
+                                {% if worker.jobstatus == "busy" %} ⏳ Busy
+                                {% elif worker.jobstatus == "completed" %} ✔️ Completed
+                                {% else %} Not Available
+                                {% endif %}
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
                 {% empty %}
@@ -56,34 +83,34 @@
 
 <!-- Styles -->
 <style>
-    .worker-card {
-        border: 1px solid #e0e0e0;
-        border-radius: 10px;
-        padding: 15px;
-        background: #fff;
-        transition: all 0.3s ease;
-        height: 100%;
-    }
-    .worker-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    }
-    .worker-img {
-        width: 100%;
-        height: 220px;
-        object-fit: cover;
-        border-radius: 8px;
-    }
-    .worker-info h5 {
-        font-size: 18px;
-        font-weight: 600;
-        margin: 10px 0 5px;
-    }
-    .worker-info p {
-        font-size: 14px;
-        margin: 2px 0;
-        color: #555;
-    }
+.worker-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    background: #fff;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+.worker-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+.worker-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.worker-info h5 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 10px 0 5px;
+}
+.worker-info p {
+    font-size: 14px;
+    margin: 2px 0;
+    color: #555;
+}
 </style>
 
 {% endblock %}

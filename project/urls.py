@@ -41,6 +41,8 @@ urlpatterns = [
     path("bookingcategory/", views.bookingcategory, name="bookingcategory"),
     path('approveworker/', views.approveworker),
     path('rejectedworker/', views.rejectedworker),
+    path("book-worker/<int:worker_id>/", views.book_worker, name="book_worker"),
+    
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))

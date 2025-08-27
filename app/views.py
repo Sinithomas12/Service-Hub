@@ -3,6 +3,9 @@ from .models import *
 from django.shortcuts import redirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import WorkersReg, Booking, UserReg
 
 from datetime import date as d, datetime as dt
 
@@ -14,6 +17,10 @@ def services(request):
     return render(request, 'services.html')
 def about(request):
     return render(request, 'about.html')
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Login, UserReg, WorkersReg
+
 def login(request):
     msg = request.GET.get('msg', '')
 
@@ -25,22 +32,30 @@ def login(request):
             # Check if credentials match in Login table
             data = Login.objects.get(email=email, password=password)
 
-            # Save session
+            # Save common session data
             request.session['email'] = data.email
             request.session['userType'] = data.userType
 
-            # Redirect based on user type
+            # Save user id depending on type
             if data.userType == "admin":
-                return redirect('adminhome')   # use named url instead of render
+                request.session['userid'] = data.id   # store login table id for admin
+                return redirect('adminhome')
+
             elif data.userType == "worker":
-                return redirect('worker_home')
+                worker = WorkersReg.objects.get(worid=data.id)  # match worker by Login FK
+                request.session['userid'] = worker.id
+                return redirect('workerhome')
+
             elif data.userType == "user":
+                user = UserReg.objects.get(usrid=data.id)  # match user by Login FK
+                request.session['userid'] = user.id
                 return redirect('userhome')
 
         except Login.DoesNotExist:
             msg = "Invalid username or password provided"
 
     return render(request, 'login.html', {'msg': msg})
+
 
 def userregistration(request):
     msg=""
@@ -174,29 +189,23 @@ def userviewcategory(request):
     return render(request,'user/userviewcategory.html',{"abc":abc})
 from django.shortcuts import render, get_object_or_404
 from .models import Category, WorkersReg
+from django.shortcuts import get_object_or_404, render
+from .models import Category, WorkersReg
 
 def bookingcategory(request):
-    # 1) Get category name from query parameter (?type=Plumber)
     servicetype = request.GET.get("type")
-
-    # 2) Ensure category exists
     selectedcategory = get_object_or_404(Category, category=servicetype)
 
-    # 3) Fetch all workers under this category who are approved
     workers = WorkersReg.objects.filter(
         category=selectedcategory,
         status="approved"
     )
 
-    # 4) Pass category + workers list to template
-    return render(
-        request,
-        "user/bookingcategory.html",
-        {
-            "selectedcategory": selectedcategory,
-            "workers": workers
-        }
-    )
+    return render(request, "user/bookingcategory.html", {
+        "selectedcategory": selectedcategory,
+        "workers": workers
+    })
+
 def approveworker(request):
     workerid=request.GET.get("id")
     if workerid:
@@ -211,4 +220,34 @@ def rejectedworker(request):
             worker.worid.delete()
     msg="Worker rejected and deleted"
     return HttpResponseRedirect("/viewworker?msg="+msg)
-    
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import WorkersReg, Booking, UserReg
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import WorkersReg, UserReg, Booking
+
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from .models import WorkersReg, UserReg, Booking
+
+def book_worker(request, worker_id):
+    worker = get_object_or_404(WorkersReg, id=worker_id)
+    user_id = request.session.get("userid")
+    user = get_object_or_404(UserReg, id=user_id)
+
+    # Save category to stay on same page
+    category = worker.category.category
+
+    if request.method == "POST":
+        if worker.jobstatus == "available":
+            Booking.objects.create(user=user, worker=worker, status="booked")
+            worker.jobstatus = "busy"
+            worker.save()
+            messages.success(request, f"{worker.name} has been booked successfully ✅")
+        else:
+            messages.error(request, f"Sorry, {worker.name} is not available ❌")
+        
+        # Redirect back to the same category page
+        return redirect(f'/bookingcategory/?type={category}')
