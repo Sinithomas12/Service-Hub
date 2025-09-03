@@ -44,11 +44,10 @@ Author URL: http://w3layouts.com
     <header id="site-header" class="fixed-top">
         <div class="container-fluid">
             <nav class="navbar navbar-expand-lg stroke">
-                <a class="nav-link" href="{% url 'userhome' %}" style="color:black; font-weight:bold; font-size:30px;">
-                    <i class="fa fa-yelp mr-1" aria-hidden="true" style="color:orange; font-size:30px;"></i>Service Hub
-                </a>
-                
-                
+                <h1>
+                    <a class="navbar-brand d-flex align-items-center" href="index.html">
+                        <i class="fa fa-yelp mr-1" aria-hidden="true"></i>Service Hub</a>
+                </h1>
                 <!-- if logo is image enable this
     <a class="navbar-brand" href="#index.html">
         <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
@@ -63,8 +62,7 @@ Author URL: http://w3layouts.com
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo02" style="margin-right:25%;">
                     <ul class="navbar-nav ml-lg-auto">
                         <li class="nav-item active">
-                            <a class="nav-link" href="{% url 'userhome' %}">Home
-<span class="sr-only">(current)</span></a>
+                            <a class="nav-link" href="{% url 'workerhome'%}">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <div class="dropdown">
                             <li class="nav-item">
@@ -72,25 +70,24 @@ Author URL: http://w3layouts.com
                             </li>
                             <div class="dropdown-content">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/userviewcategory">Services</a>
+                                    <a class="nav-link" href="/workerviewbooking">Booking</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/userviewbooking">Booking</a>
+                                    <a class="nav-link" href="/wviewfeedback">Feedback</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/userviewpayment">Payment</a>
+                                    <a class="nav-link" href="/workerviewpayment">Payment</a>
                                 </li>
                             </div>
                         </div>
 
-                          <li class="nav-item">
-
-                              <a class="nav-link"  href="/userprofile"  >Profile</a>
-
-                           </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Log Out</a>
+                            <a class="nav-link" href="/workerprofile">Profile</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">LogOut</a>
                         </li>
                     </ul>
                 </div>
@@ -113,6 +110,26 @@ Author URL: http://w3layouts.com
         </div>
     </header>
     <!--//header-->
+    
+    <style>
+        /* Reduce inner banner height */
+        .inner-banner {
+            min-height: 120px; /* or any height you prefer */
+            padding: 20px 0; /* less vertical padding */
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+    
+
+    <!-- inner banner -->
+    <div class="inner-banner">
+        <section class="w3l-breadcrumb">
+            <div class="container">
+            </div>
+        </section>
+    </div>
+    <!-- //inner banner -->
 
     <!-- banner section -->
     <section id="home" class="w3l-banner py-5">
@@ -131,6 +148,13 @@ Author URL: http://w3layouts.com
             </div>
         </div>
     </section>
+    <!-- //banner section -->
+
+   
+    <!-- //footer -->
+    <!-- copyright -->
+    <!-- Footer -->
+
     <section class="w3l-copyright">
         <div class="container">
             <div class="row bottom-copies">

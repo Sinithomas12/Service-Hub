@@ -103,14 +103,46 @@ class Contactus(models.Model):
 
     def __str__(self):
         return self.name or "No Name"
+from django.db import models
+
 class Booking(models.Model):
-    user=models.ForeignKey(UserReg,on_delete=models.CASCADE)
-    worker=models.ForeignKey(WorkersReg,on_delete=models.CASCADE)
-    booking_date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('UserReg', on_delete=models.CASCADE)
+    worker = models.ForeignKey('WorkersReg', on_delete=models.CASCADE)
+    bookingdatetime = models.DateTimeField(null=True, blank=True)  # user-selected date & time
+    additionalinfo = models.TextField(blank=True)
+    
     status = models.CharField(
         max_length=20,
         choices=[("booked", "Booked"), ("completed", "Completed"), ("cancelled", "Cancelled")],
         default="booked"
     )
+
+    payment_status = models.CharField(
+        max_length=20,
+        choices=[("pending", "Pending"), ("paid", "Paid")],
+        default="pending"
+    )
+
     def __str__(self):
-        return f"{self.user.name} booked {self.worker.name}"
+        if self.bookingdatetime:
+            dt_str = self.bookingdatetime.strftime('%d-%m-%Y %I:%M %p')
+        else:
+            dt_str = "No date set"
+        return f"{self.user.name} booked {self.worker.name} on {dt_str} ({self.status})"
+
+
+class Payment(models.Model):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    stripe_payment_intent = models.CharField(max_length=255, blank=True, null=True)  # Stripe ID
+    status = models.CharField(
+        max_length=20,
+        choices=[("pending", "Pending"), ("paid", "Paid"), ("failed", "Failed")],
+        default="pending"
+    )
+    payment_date = models.DateTimeField(auto_now_add=True)
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"Payment {self.status} for {self.booking.user.name}'s booking"
+

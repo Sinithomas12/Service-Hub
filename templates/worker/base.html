@@ -1,4 +1,5 @@
 {% load static %}
+
 <!--
 Author: W3layouts
 Author URL: http://w3layouts.com
@@ -10,12 +11,13 @@ Author URL: http://w3layouts.com
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Work Land - Home </title>
+    <title>Work Land</title>
     <!-- google-fonts -->
     <link href="//fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <!-- //google-fonts -->
     <!-- Template CSS Style link -->
     <link rel="stylesheet" href="{% static 'assets/css/style-starter.css' %}">
+
     <style>
         .dropdown:hover .dropdown-content {
             display: block;
@@ -33,6 +35,7 @@ Author URL: http://w3layouts.com
             z-index: 1;
         }
     </style>
+
 </head>
 {% if msg %}
 <script>
@@ -44,12 +47,11 @@ Author URL: http://w3layouts.com
     <header id="site-header" class="fixed-top">
         <div class="container-fluid">
             <nav class="navbar navbar-expand-lg stroke">
-                <a class="nav-link" href="{% url 'userhome' %}" style="color:black; font-weight:bold; font-size:30px;">
-                    <i class="fa fa-yelp mr-1" aria-hidden="true" style="color:orange; font-size:30px;"></i>Service Hub
-                </a>
-                
-                
-                <!-- if logo is image enable this
+                <h1>
+                    <a class="navbar-brand d-flex align-items-center" href="index.html">
+                        <i class="fa fa-yelp mr-1" aria-hidden="true"></i>Service Hub</a>
+                </h1>
+                <!-- if logo is image enable this   
     <a class="navbar-brand" href="#index.html">
         <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
     </a> -->
@@ -63,8 +65,7 @@ Author URL: http://w3layouts.com
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo02" style="margin-right:25%;">
                     <ul class="navbar-nav ml-lg-auto">
                         <li class="nav-item active">
-                            <a class="nav-link" href="{% url 'userhome' %}">Home
-<span class="sr-only">(current)</span></a>
+                            <a class="nav-link" href="{% url 'workerhome'%}">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <div class="dropdown">
                             <li class="nav-item">
@@ -72,25 +73,25 @@ Author URL: http://w3layouts.com
                             </li>
                             <div class="dropdown-content">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/userviewcategory">Services</a>
+                                    <a class="nav-link" href="/workerviewbooking">Booking</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/userviewbooking">Booking</a>
+                                    <a class="nav-link" href="/wviewfeedback">Feedback</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/userviewpayment">Payment</a>
+                                    <a class="nav-link" href="/workerviewpayment">Payment</a>
                                 </li>
+                                
                             </div>
                         </div>
 
-                          <li class="nav-item">
-
-                              <a class="nav-link"  href="/userprofile"  >Profile</a>
-
-                           </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Log Out</a>
+                            <a class="nav-link" href="/workerprofile">Profile</a>
+                        </li>
+            
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">LogOut</a>
                         </li>
                     </ul>
                 </div>
@@ -114,39 +115,55 @@ Author URL: http://w3layouts.com
     </header>
     <!--//header-->
 
-    <!-- banner section -->
-    <section id="home" class="w3l-banner py-5">
-        <div class="container pt-5 pb-md-4">
-            <div class="row align-items-center">
-                <div class="col-md-6 pt-md-0 pt-4">
-                      <h3 class="mb-sm-4 mb-3 title" align="">"Elevate Your Spaces:
-                        <span> Book Expert Services for Homes, Offices, and More!"</span></h3>
-                    <p>"Experience Hassle-Free Services with Our Reliable and Professional Website"<br><br><br><br><br><br><br><br><br></p>
-                    <div class="mt-md-5 mt-4 mb-lg-0 mb-4">
-                    </div>
-                </div>
-                <div class="col-md-6 banner-right mt-md-0 mt-4 text-right">
-                    <img class="img-fluid" src="{% static 'assets/images/img.jpg' %}" alt=" ">
+    <!-- inner banner -->
+    
+    <style>
+        /* Reduce inner banner height */
+        .inner-banner {
+            min-height: 120px; /* or any height you prefer */
+            padding: 20px 0; /* less vertical padding */
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+    
+
+    <!-- inner banner -->
+    <div class="inner-banner">
+        <section class="w3l-breadcrumb">
+            <div class="container">
+            </div>
+        </section>
+    </div>
+    <!-- //inner banner -->
+    <!-- //inner banner -->
+
+    {% block content %}
+	{% endblock %}
+
+
+    <!-- //footer -->
+    <!-- copyright -->
+   <!-- Footer -->
+<!-- Footer -->
+<section class="w3l-copyright" >
+    <div class="container">
+        <div class="row bottom-copies">
+            <p class="col-lg-8 copy-footer-29">©  2023 Work Land. All rights reserved.
+            <div class="col-lg-4 text-right">
+                <div class="main-social-footer-29">
+                    <a href="#facebook" class="facebook"><span class="fa fa-facebook"></span></a>
+                    <a href="#twitter" class="twitter"><span class="fa fa-twitter"></span></a>
+                    <a href="#google"><span class="fa fa-google-plus" aria-hidden="true"></span></a>
+                    <a href="#instagram" class="instagram"><span class="fa fa-instagram"></span></a>
+                    <a href="#linkedin" class="linkedin"><span class="fa fa-linkedin"></span></a>
                 </div>
             </div>
         </div>
-    </section>
-    <section class="w3l-copyright">
-        <div class="container">
-            <div class="row bottom-copies">
-                <p class="col-lg-8 copy-footer-29">© 2023 Work Land. All rights reserved
-                <div class="col-lg-4 text-right">
-                    <div class="main-social-footer-29">
-                        <a href="#facebook" class="facebook"><span class="fa fa-facebook"></span></a>
-                        <a href="#twitter" class="twitter"><span class="fa fa-twitter"></span></a>
-                        <a href="#google"><span class="fa fa-google-plus" aria-hidden="true"></span></a>
-                        <a href="#instagram" class="instagram"><span class="fa fa-instagram"></span></a>
-                        <a href="#linkedin" class="linkedin"><span class="fa fa-linkedin"></span></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
+</section>
+
+
     <!-- //copyright -->
 
     <!-- Js scripts -->
@@ -180,18 +197,6 @@ Author URL: http://w3layouts.com
     <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
     <!-- //common jquery plugin -->
 
-    <!-- gallery popup js -->
-    <script src="{% static 'assets/js/smartphoto.js' %}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const sm = new SmartPhoto(".js' %}-img-viwer", {
-                showAnimation: false
-            });
-            // sm.destroy();
-        });
-    </script>
-    <!-- //gallery popup js -->
-
     <!-- theme switch js (light and dark)-->
     <script src="{% static 'assets/js/theme-change.js' %}"></script>
     <script>
@@ -223,9 +228,9 @@ Author URL: http://w3layouts.com
         }
 
         $(document).ready(function () {
-            // Now to start autoTyping just call the autoType function with the
+            // Now to start autoTyping just call the autoType function with the 
             // class of outer div
-            // The second paramter is the speed between each letter is typed.
+            // The second paramter is the speed between each letter is typed.   
             autoType(".type-js", 200);
         });
     </script>
