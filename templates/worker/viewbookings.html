@@ -18,7 +18,7 @@
 
     {% if bookings %}
         <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+            <thead class="table">
                 <tr>
                     <th>User</th>
                     <th>Contact</th>
@@ -32,7 +32,8 @@
                     <tr>
                         <td>{{ booking.user.name }}</td>
                         <td>{{ booking.user.phone }}</td>
-                        <td>{{ booking.booking_date|date:"M d, Y H:i" }}</td>
+                        <!-- ✅ Fixed field name -->
+                        <td>{{ booking.bookingdatetime|date:"M d, Y H:i" }}</td>
                         <td>
                             {% if booking.status == "booked" %}
                                 <span class="badge bg-primary">Booked</span>

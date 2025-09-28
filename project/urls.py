@@ -83,8 +83,23 @@ urlpatterns = [
     path('adminhome/', views.adminhome, name='adminhome'),
     path('addcategory/', views.addcategory),
     path('viewuser/', views.viewuser),
-    path('viewworker/', views.viewworker),
-    path('viewcategory/', views.viewcategory),
+    path('viewworker/', views.viewworker, name="viewworker"),
+    path('viewcategory/', views.viewcategory, name='viewcategory'),
+    path('viewpayment/',views.viewpayment),
+    path("editworker/<int:id>/", views.editworker, name="editworker"),
+    path('deleteworker/<int:id>/', views.deleteworker, name='deleteworker'),
+    path('editcategory/<int:id>/', views.editcategory, name='editcategory'), # Edit a category
+    path('deletecategory/<int:id>/', views.deletecategory, name='deletecategory'), # Delete a category
+    # Admin booking URLs
+    path('viewbooking/', views.viewbooking, name="viewbooking"),
+    path('completebooking/<int:id>/', views.admin_complete_booking, name="admin_completebooking"),
+    path('cancelbooking/<int:id>/', views.admin_cancel_booking, name="admin_cancelbooking"),
+    path('deletebooking/<int:id>/', views.delete_booking, name="admin_deletebooking"),
+    path('deletepayment/<int:id>/', views.deletepayment, name="deletepayment"),
+
+    path('viewpayment/', views.viewpayment, name="viewpayment"),
+    path('contactus/', views.contactus, name='contactus'),
+    path('admincontactus/', views.admincontactus, name='admincontactus'),
 
     # User dashboard
     path('userhome/', views.userhome, name='userhome'),
@@ -92,7 +107,11 @@ urlpatterns = [
     path('bookingcategory/', views.bookingcategory, name='bookingcategory'),
     path('approveworker/', views.approveworker),
     path('rejectedworker/', views.rejectedworker),
-
+    path('cancelbooking/<int:id>/', views.cancelbooking, name='cancelbooking'),
+    path('userviewbooking/', views.userviewbooking, name='userviewbooking'),
+    path('userviewpayment/', views.userviewpayment, name='userviewpayment'),
+    path('userprofile/', views.userprofile, name='userprofile'),
+    
     # Worker booking / management
     path('book-worker/<int:worker_id>/', views.book_worker, name='book_worker'),
     path('checkout-stripe/<int:booking_id>/', views.checkout_stripe, name='checkout_stripe'),
@@ -102,6 +121,8 @@ urlpatterns = [
     path('workerhome/', views.workerhome, name='workerhome'),
     path('workerviewbooking/', views.workerbooking, name='workerbooking'),
     path('worker/complete-booking/<int:booking_id>/', views.completebooking, name='completebooking'),
+    path('workerviewpayment/', views.workerviewpayment, name='workerviewpayment'),
+    path('workerprofile/', views.workerprofile, name='workerprofile'),
 ]
 
 # Serve static and media files in DEBUG mode

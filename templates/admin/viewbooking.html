@@ -1,0 +1,160 @@
+{% extends 'admin/commonbase.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+/* Table Styling */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+th, td { text-align: center; padding: 8px 12px; border-bottom: 1px solid #ddd; }
+th { background-color: #f1f1f1; font-weight: 600; color: #333; }
+tr:nth-child(even) { background-color: #f8f9fa; }
+tr:hover { background-color: #e9f3ff; }
+
+.badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.badge-booked { background: #ffc107; color: #000; }
+.badge-complete { background: #28a745; color: #fff; }
+.badge-cancel { background: #dc3545; color: #fff; }
+
+.btn { padding: 5px 10px; margin: 0; border: none; cursor: pointer; text-decoration: none; color: white; border-radius: 6px; font-size: 12px; }
+.btn-complete { background: #28a745; }
+.btn-cancel { background: #dc3545; }
+.btn-delete { background: #6c757d; }
+
+/* Action buttons linear layout */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* 🔍 Search Bar Styling */
+.search-container {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.search-input {
+    width: 300px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+.search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0,123,255,0.4);
+}
+</style>
+
+<section class="w3l-team" id="team">
+    <div class="team-block py-5">
+        <div class="container py-lg-5">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-10">
+                    <div class="section-heading mb-sm-5 mb-4">
+                        <h3 class="title-style mb-3">📌 Booking Requests</h3>
+                        <p class="text-muted">Manage and track all worker bookings below.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 🔍 Search Bar -->
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by user, worker, category, status...">
+            </div>
+
+            <div class="table-responsive">
+                <table id="bookingTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Worker</th>
+                            <th>Category</th>
+                            <th>Booking Date & Time</th>
+                            <th>Additional Info</th>
+                            <th>Status</th>
+                            <th>Payment Status</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in bookings %}
+                        <tr>
+                            <td>{{ i.id }}</td>
+                            <td>{{ i.user.name }}</td>
+                            <td>{{ i.user.email }}</td>
+                            <td>{{ i.user.phone }}</td>
+                            <td>{{ i.worker.name }}</td>
+                            <td>{{ i.worker.category.category }}</td>
+                            <td>
+                                {% if i.bookingdatetime %}
+                                    {{ i.bookingdatetime|date:"d-m-Y H:i" }}
+                                {% else %}
+                                    <span class="text-muted">Not set</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ i.additionalinfo|default:"-" }}</td>
+                            <td>
+                                {% if i.status == "booked" %}
+                                    <span class="badge badge-booked">Booked</span>
+                                {% elif i.status == "completed" %}
+                                    <span class="badge badge-complete">Completed</span>
+                                {% elif i.status == "cancelled" %}
+                                    <span class="badge badge-cancel">Cancelled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ i.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ i.payment_status|title }}</td>
+                            <td>₹{{ i.payment.amount }}</td>
+                            <td>
+                                {% if i.status == "booked" %}
+                                    <div class="action-buttons">
+                                        <a href="{% url 'admin_completebooking' i.id %}" class="btn btn-complete">✅ Complete</a>
+                                        <a href="{% url 'admin_cancelbooking' i.id %}" class="btn btn-cancel">❌ Cancel</a>
+                                        <a href="{% url 'admin_deletebooking' i.id %}" class="btn btn-delete"
+                                           onclick="return confirm('Are you sure you want to delete this booking?');">🗑️ Delete</a>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">No actions</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="12" class="text-center py-4"><strong>No bookings found.</strong> 🙁</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 🔎 JavaScript for Live Search -->
+<script>
+document.getElementById("searchInput").addEventListener("keyup", function() {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#bookingTable tbody tr");
+
+    rows.forEach(row => {
+        let text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? "" : "none";
+    });
+});
+</script>
+
+{% endblock %}

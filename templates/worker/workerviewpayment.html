@@ -1,0 +1,180 @@
+{% extends 'worker/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+.payment-container {
+    margin: 20px 0;
+}
+
+.page-title {
+    margin-bottom: 15px;
+    font-family: Arial, sans-serif;
+}
+
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.payment-table th, .payment-table td {
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.payment-table th {
+    background-color: #f8f9fa;
+}
+
+.payment-table tr:nth-child(even) {
+    background-color: #D6EEEE;
+}
+
+.btn-print {
+    padding: 5px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-print:hover {
+    background-color: #218838;
+}
+
+#searchInput {
+    width: 30%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+</style>
+
+<h2 class="page-title">💳 My Payments</h2>
+
+<!-- Search Bar -->
+<input type="text" id="searchInput" onkeyup="filterPayments()" placeholder="Search by Booking ID, User Name, or Category">
+
+<div class="payment-container">
+    <table class="payment-table" id="paymentTable">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>User Name</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Payment Status</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr id="payment-{{ payment.id }}">
+                <td>{{ payment.booking.id }}</td>
+                <td>{{ payment.booking.user.name }}</td>
+                <td>{{ payment.booking.worker.category.category }}</td>
+                <td>₹{{ payment.amount }}</td>
+                <td>{{ payment.status|title }}</td>
+                <td>{{ payment.payment_date|date:"d M Y, h:i A" }}</td>
+                <td>
+                    <button class="btn-print" 
+                        onclick="printInvoice(
+                            '{{ payment.id }}', 
+                            '{{ payment.booking.user.name }}', 
+                            '{{ payment.booking.user.email }}'
+                        )">🖨️ Print</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No payments found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function filterPayments() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const table = document.getElementById("paymentTable");
+    const rows = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < rows.length; i++) { // skip header
+        const cells = rows[i].getElementsByTagName("td");
+        if (cells.length > 0) {
+            const bookingId = cells[0].innerText.toLowerCase();
+            const userName = cells[1].innerText.toLowerCase();
+            const category = cells[2].innerText.toLowerCase();
+
+            if (bookingId.includes(input) || userName.includes(input) || category.includes(input)) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+}
+
+function printInvoice(id, userName, userEmail) {
+    var row = document.getElementById("payment-" + id);
+
+    var bookingID = row.querySelector("td:nth-child(1)").innerText;
+    var category = row.querySelector("td:nth-child(3)").innerText;
+    var amount = row.querySelector("td:nth-child(4)").innerText;
+    var status = row.querySelector("td:nth-child(5)").innerText;
+    var date = row.querySelector("td:nth-child(6)").innerText;
+
+    var win = window.open("", "Invoice", "width=800,height=600");
+
+    win.document.write("<html><head><title>Payment Invoice</title>");
+    win.document.write("<style>");
+    win.document.write("body{font-family: Arial, sans-serif; margin:20px;} ");
+    win.document.write(".invoice-box{max-width:800px; margin:auto; padding:30px; border:1px solid #eee; box-shadow:0 0 10px rgba(0,0,0,0.15);} ");
+    win.document.write(".invoice-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;} ");
+    win.document.write(".invoice-header img{max-width:120px;} ");
+    win.document.write(".invoice-details{margin-bottom:20px;} ");
+    win.document.write(".invoice-details div{margin:5px 0;} ");
+    win.document.write("table{width:100%; border-collapse:collapse; margin-bottom:20px;} ");
+    win.document.write("th, td{padding:12px; border:1px solid #ddd; text-align:left;} ");
+    win.document.write("th{background-color:#f8f9fa;} ");
+    win.document.write(".total{font-weight:bold; text-align:right;} ");
+    win.document.write("</style>");
+    win.document.write("</head><body>");
+
+    win.document.write("<div class='invoice-box'>");
+    win.document.write("<div class='invoice-header'>");
+    win.document.write("<img src='/static/images/logo.png' alt='Logo'>");
+    win.document.write("<div><h2>ServiceHub</h2><div>Payment Invoice</div></div>");
+    win.document.write("</div>");
+
+    win.document.write("<div class='invoice-details'>");
+    win.document.write("<div><strong>Billed To:</strong> " + userName + "</div>");
+    win.document.write("<div><strong>Email:</strong> " + userEmail + "</div>");
+    win.document.write("<div><strong>Date:</strong> " + date + "</div>");
+    win.document.write("</div>");
+
+    win.document.write("<table>");
+    win.document.write("<tr><th>Booking ID</th><td>" + bookingID + "</td></tr>");
+    win.document.write("<tr><th>Category</th><td>" + category + "</td></tr>");
+    win.document.write("<tr><th>Amount</th><td>" + amount + "</td></tr>");
+    win.document.write("<tr><th>Status</th><td>" + status + "</td></tr>");
+    win.document.write("<tr><th class='total'>Total</th><td class='total'>" + amount + "</td></tr>");
+    win.document.write("</table>");
+
+    win.document.write("<div>Thank you for using ServiceHub Platform!</div>");
+    win.document.write("</div>");
+    win.document.write("</body></html>");
+    win.document.close();
+    win.print();
+}
+</script>
+
+{% endblock %}

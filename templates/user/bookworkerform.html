@@ -1,7 +1,64 @@
 {% extends 'user/base.html' %}
 {% block content %}
-<div class="container mt-5">
-    <h2>Book Worker: <span style="color:#ff6600;">{{ worker.name }}</span></h2>
+
+<style>
+/* 🌟 Extra styling to make the form more modern */
+.booking-container {
+  max-width: 600px;
+  margin: 60px auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+.booking-container:hover {
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+.booking-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #343a40;
+}
+.booking-subtitle {
+  text-align: center;
+  color: #6c757d;
+  margin-bottom: 30px;
+}
+.form-label {
+  font-weight: 600;
+  color: #333;
+}
+.btn-book {
+  width: 100%;
+  background: linear-gradient(135deg, #dfddd8, #e9e6e1);
+  border: none;
+  padding: 14px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+.btn-book:hover {
+  background: linear-gradient(135deg, #dfddd8,#dfddd8,);
+  transform: translateY(-2px);
+}
+.amount-box {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #000000;
+}
+</style>
+
+<div class="booking-container">
+    <h2 class="booking-title"> Book <span style="color:#ffc400;">{{ worker.name }}</span></h2>
+    <p class="booking-subtitle">Secure your booking in just a few seconds</p>
 
     {% if messages %}
         {% for message in messages %}
@@ -12,24 +69,30 @@
         {% endfor %}
     {% endif %}
 
-    <form method="POST" class="p-4 border rounded shadow-sm bg-light">
+    <form method="POST">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="bookingdatetime">Booking Date & Time:</label>
-            <input type="datetime-local" id="bookingdatetime" name="bookingdatetime" class="form-control" required>
+        <!-- Booking Date & Time -->
+        <div class="mb-4">
+            <label for="bookingdatetime" class="form-label"> Choose Date & Time:</label>
+            <input type="datetime-local" id="bookingdatetime" name="bookingdatetime" class="form-control form-control-lg" required>
+            <small class="text-muted">* Please pick a suitable time for the service</small>
         </div>
 
-        <div class="mb-3">
-            <label for="additionalinfo">Additional Info (Optional):</label>
-            <textarea id="additionalinfo" name="additionalinfo" class="form-control" rows="3"></textarea>
+        <!-- Additional Info -->
+        <div class="mb-4">
+            <label for="additionalinfo" class="form-label">Additional Info (Optional):</label>
+            <textarea id="additionalinfo" name="additionalinfo" class="form-control form-control-lg" rows="3" placeholder="Add any special instructions..."></textarea>
         </div>
 
-        <div class="mb-3">
-            <label>Amount:</label>
-            <input type="number" value="500" class="form-control" readonly>
+        <!-- Amount -->
+        <div class="mb-4">
+            <label class="form-label">Amount:</label>
+            <div class="amount-box">₹ 500</div>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg">Pay & Book</button>
+        <!-- Submit -->
+        <button type="submit" class="btn btn-book">💳 Pay & Book Now</button>
     </form>
 </div>
+
 {% endblock %}

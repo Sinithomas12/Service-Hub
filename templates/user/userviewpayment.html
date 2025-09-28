@@ -1,0 +1,228 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+/* Container & Page Title */
+.payment-container {
+    margin: 30px 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.page-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Search Bar */
+#searchInput {
+    width: 40%;
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+/* Table */
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.payment-table th, .payment-table td {
+    padding: 12px 18px;
+    text-align: left;
+}
+
+.payment-table th {
+    background-color: #807f7d;
+    color: white;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.payment-table tr:nth-child(even) {
+    background-color: #f2f9ff;
+}
+
+.payment-table tr:hover {
+    background-color: #e6f0ff;
+}
+
+/* Status Badges */
+.badge-paid {
+    background-color: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-pending {
+    background-color: #ffc107;
+    color: #212529;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn-print {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: #1f231e;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+.btn-print:hover {
+    background-color: #f2f5f8;
+}
+</style>
+
+<div class="payment-container">
+    <h2 class="page-title">💳 My Payments</h2>
+
+    <!-- Search Bar -->
+    <input type="text" id="searchInput" onkeyup="filterPayments()" placeholder="Search by Booking ID, Worker Name, or Category">
+
+    <!-- Payments Table -->
+    <table class="payment-table" id="paymentTable">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Worker Name</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr id="payment-{{ payment.id }}">
+                <td>{{ payment.booking.id }}</td>
+                <td>{{ payment.booking.worker.name }}</td>
+                <td>{{ payment.booking.worker.category.category }}</td>
+                <td>₹{{ payment.amount }}</td>
+                <td>
+                    {% if payment.status == "paid" %}
+                        <span class="badge-paid">Paid</span>
+                    {% else %}
+                        <span class="badge-pending">Pending</span>
+                    {% endif %}
+                </td>
+                <td>{{ payment.payment_date|date:"d M Y, h:i A" }}</td>
+                <td>
+                    <button class="btn-print" 
+                        onclick="printInvoice('{{ payment.id }}', '{{ payment.booking.user.name }}', '{{ payment.booking.user.email }}')">🖨️ Print</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align:center; padding:15px;">No payments found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function filterPayments() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const table = document.getElementById("paymentTable");
+    const rows = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        if (cells.length > 0) {
+            const bookingId = cells[0].innerText.toLowerCase();
+            const workerName = cells[1].innerText.toLowerCase();
+            const category = cells[2].innerText.toLowerCase();
+
+            if (bookingId.includes(input) || workerName.includes(input) || category.includes(input)) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+}
+
+function printInvoice(id, userName, userEmail) {
+    const row = document.getElementById("payment-" + id);
+    const bookingID = row.querySelector("td:nth-child(1)").innerText;
+    const workerName = row.querySelector("td:nth-child(2)").innerText;
+    const category = row.querySelector("td:nth-child(3)").innerText;
+    const amount = row.querySelector("td:nth-child(4)").innerText;
+    const status = row.querySelector("td:nth-child(5)").innerText;
+    const date = row.querySelector("td:nth-child(6)").innerText;
+
+    const win = window.open("", "Invoice", "width=800,height=600");
+
+    win.document.write("<html><head><title>Payment Invoice</title>");
+    win.document.write("<style>");
+    win.document.write("body{font-family: Arial, sans-serif; margin:20px;} ");
+    win.document.write(".invoice-box{max-width:800px; margin:auto; padding:30px; border:1px solid #eee; box-shadow:0 0 10px rgba(0,0,0,0.15);} ");
+    win.document.write(".invoice-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;} ");
+    win.document.write(".invoice-header img{max-width:120px;} ");
+    win.document.write(".invoice-details{margin-bottom:20px;} ");
+    win.document.write(".invoice-details div{margin:5px 0;} ");
+    win.document.write("table{width:100%; border-collapse:collapse; margin-bottom:20px;} ");
+    win.document.write("th, td{padding:12px; border:1px solid #ddd; text-align:left;} ");
+    win.document.write("th{background-color:#007bff; color:white;} ");
+    win.document.write(".total{font-weight:bold; text-align:right;} ");
+    win.document.write("</style>");
+    win.document.write("</head><body>");
+
+    win.document.write("<div class='invoice-box'>");
+    win.document.write("<div class='invoice-header'>");
+    win.document.write("<img src='/static/images/logo.png' alt='Logo'>");
+    win.document.write("<div><h2>ServiceHub</h2><div>Payment Invoice</div></div>");
+    win.document.write("</div>");
+
+    win.document.write("<div class='invoice-details'>");
+    win.document.write("<div><strong>Billed To:</strong> " + userName + "</div>");
+    win.document.write("<div><strong>Email:</strong> " + userEmail + "</div>");
+    win.document.write("<div><strong>Date:</strong> " + date + "</div>");
+    win.document.write("</div>");
+
+    win.document.write("<table>");
+    win.document.write("<tr><th>Booking ID</th><td>" + bookingID + "</td></tr>");
+    win.document.write("<tr><th>Worker Name</th><td>" + workerName + "</td></tr>");
+    win.document.write("<tr><th>Category</th><td>" + category + "</td></tr>");
+    win.document.write("<tr><th>Amount</th><td>" + amount + "</td></tr>");
+    win.document.write("<tr><th>Status</th><td>" + status + "</td></tr>");
+    win.document.write("<tr><th class='total'>Total</th><td class='total'>" + amount + "</td></tr>");
+    win.document.write("</table>");
+
+    win.document.write("<div>Thank you for using ServiceHub Platform!</div>");
+    win.document.write("</div>");
+    win.document.write("</body></html>");
+    win.document.close();
+    win.print();
+}
+</script>
+
+{% endblock %}

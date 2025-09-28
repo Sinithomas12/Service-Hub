@@ -1,0 +1,75 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block content %}
+
+<section style="padding:50px 0; background-color: #fff;">
+    <div class="container" style="max-width:600px;">
+        <div style="background:#fff; padding:40px; border-radius:12px; box-shadow:0 5px 25px rgba(0,0,0,0.1);">
+
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h2 style="color:#333;">Update Your Profile</h2>
+                <p style="color:#666;">Keep your account information up-to-date</p>
+            </div>
+
+            <!-- Profile Form -->
+            <form action="{% url 'userprofile' %}" method="post">
+                {% csrf_token %}
+
+                <!-- Name -->
+                <div style="margin-bottom:15px; position: relative;">
+                    <input type="text" name="Name" value="{{ user.name }}" placeholder="Your Name*" 
+                           style="width:100%; padding:12px 40px 12px 15px; border:1px solid #ccc; border-radius:8px; font-size:14px;" required />
+                    <span style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#888;">👤</span>
+                </div>
+
+                <!-- Email -->
+                <div style="margin-bottom:15px; position: relative;">
+                    <input type="email" name="Email" value="{{ user.email }}" placeholder="Your Email*" 
+                           style="width:100%; padding:12px 40px 12px 15px; border:1px solid #ccc; border-radius:8px; font-size:14px;" required />
+                    <span style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#888;">📧</span>
+                </div>
+
+                <!-- Password -->
+                <div style="margin-bottom:15px; position: relative;">
+                    <input type="text" name="Password" value="{{ user.password }}" placeholder="Password*" 
+                           style="width:100%; padding:12px 40px 12px 15px; border:1px solid #ccc; border-radius:8px; font-size:14px;" required />
+                    <span style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#888;">🔒</span>
+                </div>
+
+                <!-- Phone -->
+                <div style="margin-bottom:15px; position: relative;">
+                    <input type="text" name="Phone" value="{{ user.phone }}" placeholder="Phone Number*" 
+                           style="width:100%; padding:12px 40px 12px 15px; border:1px solid #ccc; border-radius:8px; font-size:14px;" required />
+                    <span style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#888;">📞</span>
+                </div>
+
+                <!-- Gender -->
+                <div style="margin-bottom:15px;">
+                    <select name="Gender" style="width:100%; padding:12px 15px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+                        <option value="{{ user.gender }}">{{ user.gender }}</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <!-- Address -->
+                <div style="margin-bottom:20px; position: relative;">
+                    <textarea name="Address" placeholder="Type your address here*" required
+                              style="width:100%; padding:12px 15px; border:1px solid #ccc; border-radius:8px; font-size:14px; min-height:100px;">{{ user.address }}</textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" 
+                            style="background-color:#28a745; color:#fff; padding:12px 35px; border:none; border-radius:8px; font-size:16px; cursor:pointer; transition:0.3s;">
+                        Update Profile
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

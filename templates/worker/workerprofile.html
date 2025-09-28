@@ -1,0 +1,77 @@
+{% extends 'worker/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="mb-4">👤 My Profile</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" class="p-4 border rounded shadow-sm bg-light">
+        {% csrf_token %}
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="Name" class="form-label">Name</label>
+                <input type="text" id="Name" name="Name" class="form-control" value="{{ worker.name }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="Email" class="form-label">Email</label>
+                <input type="email" id="Email" name="Email" class="form-control" value="{{ worker.email }}" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="Password" class="form-label">Password</label>
+                <input type="text" id="Password" name="Password" class="form-control" value="{{ worker.password }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="Phone" class="form-label">Phone</label>
+                <input type="text" id="Phone" name="Phone" class="form-control" value="{{ worker.phone }}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="Gender" class="form-label">Gender</label>
+                <select id="Gender" name="Gender" class="form-select">
+                    <option value="Male" {% if worker.gender == "Male" %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if worker.gender == "Female" %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if worker.gender == "Other" %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="Location" class="form-label">Location</label>
+                <input type="text" id="Location" name="Location" class="form-control" value="{{ worker.location }}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="Experience" class="form-label">Experience</label>
+                <input type="text" id="Experience" name="Experience" class="form-control" value="{{ worker.experience }}">
+            </div>
+            <div class="col-md-6">
+                <label for="Wages" class="form-label">Wages</label>
+                <input type="text" id="Wages" name="Wages" class="form-control" value="{{ worker.wages }}">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="Address" class="form-label">Address</label>
+            <textarea id="Address" name="Address" class="form-control" rows="3">{{ worker.address }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg">Update Profile</button>
+    </form>
+</div>
+
+{% endblock %}

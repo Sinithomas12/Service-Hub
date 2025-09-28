@@ -47,7 +47,7 @@
                             <h5>{{ worker.name }}</h5>
                             <p><b>Experience:</b> {{ worker.experience }}</p>
                             <p><b>Location:</b> {{ worker.location }}</p>
-                            <p><b>Wages:</b> ₹{{ worker.wages }}</p>
+                            <!-- <p><b>Wages:</b> ₹{{ worker.wages }}</p> -->
                             <p><b>Status:</b> 
                                 {% if worker.jobstatus == "available" %} ✅ Available
                                 {% elif worker.jobstatus == "busy" %} ⏳ Busy

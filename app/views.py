@@ -189,12 +189,127 @@ def viewworker(request):
 def viewcategory(request):
     abc=Category.objects.all()
     return render(request,'admin/viewcategory.html',{"abc":abc})
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import WorkersReg
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import WorkersReg
+
+def editworker(request, id):
+    # Only handle POST requests from the modal form
+    if request.method == "POST":
+        worker = get_object_or_404(WorkersReg, id=id)
+        worker.name = request.POST.get("name")
+        worker.email = request.POST.get("email")
+        worker.phone = request.POST.get("phone")
+        worker.experience = request.POST.get("experience")
+        worker.location = request.POST.get("location")
+        worker.gender = request.POST.get("gender")
+        worker.wages = request.POST.get("wages")
+        worker.category = request.POST.get("category")  # assuming category is a string field
+        if request.FILES.get("image"):
+            worker.image = request.FILES.get("image")
+        worker.save()
+        messages.success(request, f"{worker.name} updated successfully ✏️")
+
+    # Always redirect back to the workers list after POST
+    return redirect("viewworker")
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import WorkersReg
+
+def deleteworker(request, id):
+    worker = get_object_or_404(WorkersReg, id=id)
+    worker_name = worker.name
+    worker.delete()  # Delete the worker
+    messages.success(request, f"{worker_name} has been deleted successfully 🗑️")
+    return redirect(request.META.get('HTTP_REFERER', '/'))  # Go back to previous page
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import Category
+
+def editcategory(request, id):
+    category = get_object_or_404(Category, id=id)
+
+    if request.method == "POST":
+        category.category = request.POST.get("category")
+        if request.FILES.get("image"):
+            category.image = request.FILES.get("image")
+        category.save()
+        messages.success(request, "Category updated successfully ✏️")
+        return redirect("viewcategory")
+
+    # For GET requests, just redirect to viewcategory (no separate page)
+    return redirect("viewcategory")
 
 
+def deletecategory(request, id):
+    category = get_object_or_404(Category, id=id)
+    category.delete()
+    messages.success(request, "Category deleted successfully 🗑️")
+    return redirect("viewcategory")
+def viewbooking(request):
+    bookings=Booking.objects.select_related("user","worker").all()
+    context ={
+        "bookings":bookings
+    }
+    return render(request,'admin/viewbooking.html',context)
 
+def viewpayment(request):
+    """
+    Admin view to see all payments with related booking, user, worker, and category info.
+    """
+    # Fetch all payments with related booking, user, worker, and category to avoid extra queries
+    payments = Payment.objects.select_related(
+        "booking__user", 
+        "booking__worker", 
+        "booking__worker__category"
+    ).all()
 
+    context = {
+        "payments": payments
+    }
+    return render(request, "admin/viewpayment.html", context)
+# Admin marks booking as completed
 
+# Mark booking as completed
+def admin_complete_booking(request, id):
+    booking = get_object_or_404(Booking, id=id)
+    if booking.status != "completed":
+        booking.status = "completed"
+        booking.save()
+        messages.success(request, f"Booking #{booking.id} marked as completed ✅")
+    else:
+        messages.info(request, f"Booking #{booking.id} is already completed.")
+    return redirect("viewbooking")
 
+# Cancel a booking
+def admin_cancel_booking(request, id):
+    booking = get_object_or_404(Booking, id=id)
+    if booking.status != "cancelled":
+        booking.status = "cancelled"
+        booking.save()
+        messages.success(request, f"Booking #{booking.id} cancelled ❌")
+    else:
+        messages.info(request, f"Booking #{booking.id} is already cancelled.")
+    return redirect("viewbooking")
+
+# Delete a booking
+def delete_booking(request, id):
+    booking = get_object_or_404(Booking, id=id)
+    booking.delete()
+    messages.success(request, f"Booking #{id} deleted 🗑️")
+    return redirect("viewbooking")
+
+def deletepayment(request,id):
+    payment=get_object_or_404(Payment,id=id)
+    payment.delete()
+    messages.success(request, "✅ Payment record deleted successfully.")
+    return redirect("viewpayment")
+def admincontactus(request):
+    messagelist=Contactus.objects.all().order_by('-id')
+    return render(request, 'admin/contactus.html', {'messages': messagelist})
      ############################### USER#################################
 
 def userhome(request):
@@ -408,15 +523,79 @@ def booking_success(request, booking_id):
     payment.stripe_payment_intent = request.GET.get("session_id", "stripe_session")
     payment.save()
 
+    # booking.worker.jobstatus = "busy"
+    # booking.worker.save()
+    
+    # Update booking payment_status
+    booking.payment_status = "paid"  # <-- add this line
     booking.worker.jobstatus = "busy"
     booking.worker.save()
+    booking.save()  # <-- save booking after updating payment_status
 
     return render(request, "user/bookingsuccess.html", {
         "booking": booking,
         "payment": payment,
         "message": f"Booking for {booking.worker.name} completed successfully, and payment received ✅"
     })
+def cancelbooking(request,id):
+    #  """ User cancels a booking. Sets booking status to 'cancelled' and updates worker availability.
+    booking=get_object_or_404(Booking,id=id) 
+     # Check if booking is already cancelled
+    if booking.status =="cancelled":
+        messages.info(request,f"Booking #{booking.id} is already cancelled.")
+        return redirect("userviewbooking") 
+    # Cancel the booking
+    booking.status="cancelled"
+    booking.save()
+    # Optional: Free up the worker if needed
+    booking.worker.jobstatus="available"
+    booking.worker.save()
+    messages.success(request, f"Booking for {booking.worker.name} has been cancelled successfully.")
+    return redirect("userviewbooking")
+def userviewbooking(request):
+    user_id = request.session.get("userid")
+    user_reg = get_object_or_404(UserReg, id=user_id)
+    bookings=Booking.objects.filter(user=user_reg)
+    return render(request, 'user/userviewbooking.html', {'bookings': bookings})
+from django.shortcuts import render, get_object_or_404
+from .models import Booking, Payment
 
+def userviewpayment(request):
+    # Get the logged-in user's id from session
+    user_id = request.session.get('userid')
+    
+    # Fetch all payments related to this user
+    payments = Payment.objects.filter(booking__user_id=user_id).select_related(
+    "booking__worker", "booking__worker__category"
+).order_by('-payment_date')  # latest first
+
+
+    return render(request, 'user/userviewpayment.html', {'payments': payments})
+# def deletepayment(request,id):
+#     payment=get_object_or_404(Payment,id=id)
+#     if request.method=="POST":
+#            payment.delete()
+#            messages.success(request, "Payment deleted successfully ❌")
+#     return redirect("userviewpayment")
+def userprofile(request):
+    # Get the logged-in user's ID from session
+    user_id = request.session.get('userid')
+    user = get_object_or_404(UserReg, id=user_id)
+
+    if request.method == "POST":
+        user.name = request.POST.get("Name")
+        user.email = request.POST.get("Email")
+        user.password = request.POST.get("Password")  # plain text
+        user.phone = request.POST.get("Phone")
+        user.address = request.POST.get("Address")
+        user.gender = request.POST.get("Gender")
+        user.save()
+
+        messages.success(request, "Profile updated successfully ✅")
+        return redirect('userprofile')  # stay on the same page
+
+    # For GET request, send current user data to template
+    return render(request, 'user/userprofile.html', {'user': user})
 
      ############################### WORKER #################################
 
@@ -424,12 +603,16 @@ def workerhome(request):
     return render(request,'worker/workerhome.html')
 def workerbooking(request):
     worker_id = request.session.get("userid")
-    worker = get_object_or_404(WorkersReg, id=worker_id)  # Adjust field name if needed
-    bookings = Booking.objects.filter(worker=worker).order_by("-booking_date")
+    worker = get_object_or_404(WorkersReg, id=worker_id)
+    
+    # ✅ FIXED: use bookingdatetime instead of booking_date
+    bookings = Booking.objects.filter(worker=worker).order_by("-bookingdatetime")
+    
     return render(request, 'worker/viewbookings.html', {
         "worker": worker,
         "bookings": bookings
     })
+
 def completebooking(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
     worker = booking.worker
@@ -444,3 +627,57 @@ def completebooking(request, booking_id):
         messages.error(request, "You cannot update this booking ❌")
 
     return redirect("workerbooking")
+from django.shortcuts import render
+from .models import Payment, WorkersReg
+
+def workerviewpayment(request):
+    # Get worker id from session
+    worker_email = request.session.get('email')
+    try:
+        worker = WorkersReg.objects.get(email=worker_email)
+        # Get payments related to this worker's bookings
+        payments = Payment.objects.filter(booking__worker=worker).order_by('-payment_date')
+    except WorkersReg.DoesNotExist:
+        payments = []
+
+    context = {
+        'payments': payments
+    }
+    return render(request, 'worker/workerviewpayment.html', context)
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import WorkersReg
+
+def workerprofile(request):
+    # Get the logged-in worker's ID from session
+    worker_id = request.session.get('userid')
+    worker = get_object_or_404(WorkersReg, id=worker_id)
+
+    if request.method == "POST":
+        worker.name = request.POST.get("Name")
+        worker.email = request.POST.get("Email")
+        worker.password = request.POST.get("Password")  # plain text
+        worker.phone = request.POST.get("Phone")
+        worker.address = request.POST.get("Address")
+        worker.gender = request.POST.get("Gender")
+        worker.location = request.POST.get("Location")
+        worker.experience = request.POST.get("Experience")
+        worker.wages = request.POST.get("Wages")
+        worker.save()
+
+        messages.success(request, "Profile updated successfully ✅")
+        return redirect('workerprofile')  # stay on same page
+
+    # For GET request, send current worker data to template
+    return render(request, 'worker/workerprofile.html', {'worker': worker})
+def contactus(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')  
+        message_text = request.POST.get('message')
+        Contactus.objects.create(name=name, email=email, message=message_text)
+        messages.success(request, "Your message has been sent successfully ✅")
+        return redirect('contactus')  # reload page
+
+    # Use the correct template name here
+    return render(request, 'contact.html')
